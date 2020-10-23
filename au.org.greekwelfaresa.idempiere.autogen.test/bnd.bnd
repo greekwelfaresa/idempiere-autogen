@@ -1,0 +1,41 @@
+# Discover and run all test cases meta-annotated with @Testable
+Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.annotation.Testable;CONCRETE}
+
+# Build dependencies 
+-buildpath: \
+	${junit},\
+	${mockito},\
+	${idempiere-test},\
+	au.org.greekwelfaresa.idempiere.autogen,\
+	osgi.annotation,\
+	osgi.core,\
+	org.adempiere.base
+
+Private-Package: au.org.greekwelfaresa.idempiere.autogen.test
+
+# Needed for Mockito's mocking to work
+-runsystempackages.objenesis: sun.misc,sun.reflect
+
+-runfw: org.eclipse.osgi
+-runee: JavaSE-11
+
+-runproperties: osgi.console=,\
+    osgi.console.enable.builtin=false,\
+    osgi.compatibility.bootdelegation=true,\
+    osgi.noShutdown=true,\
+    osgi.framework.activeThreadType=normal,\
+    org.osgi.framework.bootdelegation='sun.security.ssl,org.w3c.dom.events'
+
+-tester: biz.aQute.tester.junit-platform
+
+-runvm: -DPropertyFile=${workspace}/cnf/idempiere.properties
+
+-runrequires: \
+	bnd.identity;id='org.compiere.db.${database.type}.provider',\
+	bnd.identity;id='org.eclipse.equinox.event',\
+	bnd.identity;id='org.apache.felix.gogo.command',\
+	bnd.identity;id='org.eclipse.equinox.console',\
+	bnd.identity;id='slf4j.simple',\
+	bnd.identity;id='junit-jupiter-engine',\
+	bnd.identity;id='junit-platform-launcher',\
+	bnd.identity;id='au.org.greekwelfaresa.idempiere.autogen.test'
