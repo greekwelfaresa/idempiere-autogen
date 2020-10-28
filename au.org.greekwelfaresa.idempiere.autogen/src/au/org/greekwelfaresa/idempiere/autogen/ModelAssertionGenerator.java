@@ -27,17 +27,14 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
@@ -190,7 +187,7 @@ public class ModelAssertionGenerator {
 			superPkg = "au.org.greekwelfaresa.idempiere.test.assertj." + tableName.toLowerCase();
 			simpleSuper = "Abstract" + tableName + "Assert";
 		} else {
-			superPkg = superClass.replaceFirst("\\.[^.]*$", ".assertion.") + tableName.toLowerCase();
+			superPkg = superClass.replaceFirst("\\.[^.]*$", ".assertions.") + tableName.toLowerCase();
 			simpleSuper = "Abstract" + tableName + "Assert";
 		}
 		System.err.println("simplePkg: " + superPkg +", " + simpleSuper);
@@ -330,7 +327,7 @@ public class ModelAssertionGenerator {
 			sb.append("\tpublic SELF has").append(columnName).append("(int expected)").append(NL).append("\t{")
 					.append(NL).append("\t\tisNotNull();").append(NL).append("\t\tint actualField = actual.get")
 					.append(columnName).append("();").append(NL).append("\t\tif (expected != actualField) {").append(NL)
-					.append("\t\t\tfailWithActualExpectedAndMessage(actualField, expected, \"\\nExpecting PO: \\n  <%s>\\n to have ")
+					.append("\t\t\tthrow failureWithActualExpected(actualField, expected, \"\\nExpecting PO: \\n  <%s>\\n to have ")
 					.append(columnName).append(": <%s>\\nbut it was: <%s>\",").append(NL)
 					.append("\t\t\t\tgetPODescription(), expected, actualField);").append(NL).append("\t\t}").append(NL)
 					.append("\t\treturn myself;").append(NL)
@@ -340,14 +337,14 @@ public class ModelAssertionGenerator {
 			String baseField = columnName.replaceFirst("^[Ii][Ss]", "");
 			sb.append("\tpublic SELF is").append(baseField).append("()").append(NL).append("\t{").append(NL)
 					.append("\t\tisNotNull();").append(NL).append("\t\tif (!actual.is").append(baseField)
-					.append("()) {").append(NL).append("\t\t\tfailWithMessage(\"\\nExpecting PO:\\n  <%s>\\nto be ")
+					.append("()) {").append(NL).append("\t\t\tthrow failure(\"\\nExpecting PO:\\n  <%s>\\nto be ")
 					.append(baseField).append("\\nbut it was not\",").append(NL).append("\t\t\t\tgetPODescription());")
 					.append(NL).append("\t\t}").append(NL).append("\t\treturn myself;").append(NL)
 					/**/
 					.append("\t}").append(NL).append(NL).append("\tpublic SELF isNot").append(baseField).append("()")
 					.append(NL).append("\t{").append(NL).append("\t\tisNotNull();").append(NL)
 					.append("\t\tif (actual.is").append(baseField).append("()) {").append(NL)
-					.append("\t\t\tfailWithMessage(\"\\nExpecting PO: \\n  <%s>\\n to not be ").append(baseField)
+					.append("\t\t\tthrow failure(\"\\nExpecting PO: \\n  <%s>\\n to not be ").append(baseField)
 					.append("\\nbut it was\",").append(NL).append("\t\t\t\tgetPODescription());").append(NL)
 					.append("\t\t}").append(NL).append("\t\treturn myself;").append(NL)
 					/**/
@@ -372,7 +369,7 @@ public class ModelAssertionGenerator {
 						.append("\t\t").append(clazz.getSimpleName()).append(" actualField = actual.get")
 						.append(columnName).append("();").append(NL)
 						.append("\t\tif (!Objects.equals(expected, actualField)) {").append(NL)
-						.append("\t\t\tfailWithActualExpectedAndMessage(actualField, expected, \"\\nExpecting PO: \\n  <%s>\\n to have ")
+						.append("\t\t\tthrow failureWithActualExpected(actualField, expected, \"\\nExpecting PO: \\n  <%s>\\n to have ")
 						.append(columnName).append(": <%s>\\nbut it was: <%s>\",").append(NL)
 						.append("\t\t\t\tgetPODescription(), expected, actualField);").append(NL).append("\t\t}")
 						.append(NL).append("\t\treturn myself;").append(NL)
